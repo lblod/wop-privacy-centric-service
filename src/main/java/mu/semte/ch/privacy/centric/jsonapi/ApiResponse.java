@@ -17,9 +17,6 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiResponse {
-  private String type; // read, update
   @Builder.Default
-  private Map<String, String> attributes = new HashMap<>();
-  @Builder.Default
-  private List<Map<String, String>> relationships = new ArrayList<>();
+  private List<Map<String, String>> data = new ArrayList<>();
 }

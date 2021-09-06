@@ -1,10 +1,13 @@
 package mu.semte.ch.privacy.centric.jsonapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mu.semte.ch.lib.utils.JacksonRawDeserialize;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +21,13 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiRequest {
   private String operation; // read, update
-  private String type;
-  private String requester;
-  private String reason;
   private String property;
-  @Builder.Default
-  private Map<String, String> attributes = new HashMap<>();
-  @Builder.Default
-  private List<Map<String, String>> relationships = new ArrayList<>();
+  private String type;
+  //private String requester;
+  //private String reason;
+
+  @JsonDeserialize(using= JacksonRawDeserialize.class)
+  private String data;
+  //private Map<String, String> attributes = new HashMap<>();
+  //private List<Map<String, String>> relationships = new ArrayList<>();
 }

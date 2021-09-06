@@ -1,0 +1,14 @@
+<#assign data = dataJson?eval_json>
+<#assign id = _uuid()>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+INSERT DATA {
+        GRAPH <${graphReason}> {
+          <http://whatever.com/reasons/${id}> a  <http://whatever.com/reason#Reason>;
+                                       mu:uuid "${id}";
+                                        <http://whatever.com/reason#username>  "${data.requester}";
+                                        <http://whatever.com/reason#property>  "${property}";
+                                        <http://whatever.com/reason#operation>  "${operation}";
+                                        <http://whatever.com/reason#nsType>  "${nsType}";
+                                        <http://whatever.com/reason#reasonPhrase>  "${data.reason}".
+        }
+      }
