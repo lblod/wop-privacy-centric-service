@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+fields:
+  config: ${FIELD_CONFIG:classpath:fields.json}
+sparql:
+  endpoint: ${SPARQL_ENDPOINT:http://localhost:8890/sparql}
+  defaultGraphUri: ${TARGET_GRAPH:http://mu.semte.ch/application}
+  defaultBatchSize: ${BATCH_SIZE:100}
+  defaultLimitSize: ${LIMIT_SIZE:100}
+  maxRetry: ${MAX_RETRY:5}
+  queryStore:
+    path: ${SPARQL_QUERY_STORE_PATH:classpath*:sparql}
+
+spring:
+  servlet:
+    multipart:
+      max-request-size: ${MAX_REQUEST_SIZE:512MB}
+      max-file-size: ${MAX_FILE_SIZE:512MB}
+logging:
+  level:
+    root: ${LOGGING_LEVEL:INFO}

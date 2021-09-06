@@ -1,0 +1,31 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
+
+
+DELETE {
+  GRAPH <${graph}> {
+   <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> ?o;?x ?y.
+  }
+}
+  INSERT  {
+    GRAPH <${graph}> {
+  <#list relationships as relationship>
+        <http://data.lblod.info/id/geboortes/${relationship.id}>  a <https://data.vlaanderen.be/ns/persoon#Geboorte>;
+                                                                          mu:uuid "${relationship.id}";
+                                                                         persoon:heeftGeboorte "${relationship.dateOfBirth}"^^xsd:dateTime.
+        <http://data.lblod.info/id/personen/${id}>  <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> <http://data.lblod.info/id/geboortes/${relationship.id}>.
+
+  </#list>
+    }
+  }
+WHERE  {
+    GRAPH <${graph}> {
+      OPTIONAL {
+         <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> ?o;
+                ?x ?y.
+         }
+
+    }
+
+}
