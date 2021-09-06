@@ -5,7 +5,8 @@ PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
 
 DELETE {
   GRAPH <${graph}> {
-   <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> ?o;?x ?y.
+   <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> ?heeftGeboorte.
+   ?heeftGeboorte ?p ?o.
   }
 }
   INSERT  {
@@ -21,10 +22,11 @@ DELETE {
   }
 WHERE  {
     GRAPH <${graph}> {
-      OPTIONAL {
-         <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte> ?o;
-                ?x ?y.
-         }
+    optional {
+             <http://data.lblod.info/id/personen/${id}> <https://data.vlaanderen.be/ns/persoon#heeftGeboorte>  ?heeftGeboorte.
+              ?heeftGeboorte ?p ?o.
+    }
+
 
     }
 
