@@ -9,20 +9,23 @@ import mu.semte.ch.privacy.centric.config.FieldConfigWrapper;
 import mu.semte.ch.privacy.centric.jsonapi.ApiRequest;
 import mu.semte.ch.privacy.centric.jsonapi.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CaseUtils;
+import org.apache.jena.riot.Lang;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Service
 @Slf4j
 public class RequestService {
-  String graphReason = "http://whatever.com/graphReason"; // todo move it as a property
-  String graph = "http://mu.semte.ch/graphs/contacthub/141d9d6b-54af-4d17-b313-8d1c30bc3f5b/ChAdmin"; // todo move it as a property
+  @Value("${sparql.reasonGraphUri}")
+  private String graphReason;
+  @Value("${sparql.defaultGraphUri}")
+  private String graph;
 
   private final FieldConfigWrapper configWrapper;
   private final SparqlQueryStore queryStore;
@@ -45,15 +48,13 @@ public class RequestService {
   }
 
   private ApiResponse updateRequest(ApiRequest data) {
-    var queryKey = CaseUtils.toCamelCase(data.getProperty(), false, '-');
-    var queryName = "update".concat(StringUtils.capitalize(queryKey));
-    var field = configWrapper.getField(queryKey, data.getType())
+    var queryName = "update".concat(StringUtils.capitalize(data.getProperty()));
+    var field = configWrapper.getField(data.getProperty(), data.getType())
                              .orElseThrow(() -> new RuntimeException("Field not configured yet"));
     saveReason(data, field, "update");
 
 
     var query = queryStore.getQueryWithParameters(queryName, Map.of("dataJson",data.getData(), "graph", graph));
-    log.info(query);
     sparqlClient.executeUpdateQuery(query);
 
     return null;
@@ -65,25 +66,37 @@ public class RequestService {
             "dataJson", data.getData(),
             "nsType", config.getNsType(),
             "operation", operation,
+            "time", ModelUtils.formattedDate(LocalDateTime.now()),
             "property", config.getProperty()
     );
     var query = queryStore.getQueryWithParameters("saveReason", queryParameters);
-    log.info(query);
     sparqlClient.executeUpdateQuery(query);
   }
 
   private ApiResponse readRequest(ApiRequest apiRequest) {
-    var queryKey = CaseUtils.toCamelCase(apiRequest.getProperty(), false, '-');
-    var queryName = "read".concat(StringUtils.capitalize(queryKey));
-    var field = configWrapper.getField(queryKey, apiRequest.getType())
+    var queryName = "read".concat(StringUtils.capitalize(apiRequest.getProperty()));
+    var field = configWrapper.getField(apiRequest.getProperty(), apiRequest.getType())
                              .orElseThrow(() -> new RuntimeException("Field not configured yet"));
     saveReason(apiRequest, field, "read");
 
     Map<String, Object> queryParameters = new HashMap<>(Map.of("dataJson",apiRequest.getData()));
     queryParameters.put("graph", graph);
     var query = queryStore.getQueryWithParameters(queryName, queryParameters);
-    log.info(query);
     return ApiResponse.builder().data(sparqlClient.executeSelectQueryAsListMap(query)).build();
+  }
+
+  public String getReasons(Pageable page) {
+    //int pageSize = page.getPageSize();
+    //long offset = page.getOffset();
+    var query = queryStore.getQueryWithParameters("getReasons", Map.of(
+            "graphReason", graphReason
+            //"limitSize", pageSize,
+            //"offsetNumber", offset
+
+    ));
+    log.info(query);
+    var model = sparqlClient.executeSelectQuery(query);
+    return ModelUtils.toString(model, Lang.JSONLD);
   }
 
 

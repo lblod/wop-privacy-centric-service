@@ -17,7 +17,7 @@ This has impact on the implementation for the screens which contain sensitive da
   {
     "operation":"read",
     "type": "people",
-    "property":"date-of-birth",
+    "property":"dateOfBirth",
     "data": {
       "id":"aaca86ad-c883-410a-a4e0-070480a2",
       "requester": "nbittich",
@@ -32,13 +32,13 @@ This has impact on the implementation for the screens which contain sensitive da
   {
     "operation":"update",
     "type": "people",
-    "property":"date-of-birth",
+    "property":"dateOfBirth",
     "data": {
       "id":"aaca86ad-c883-410a-a4e0-070480a2",
       "requester": "nbittich",
-      "reason": "i want to change it it"
+      "reason": "i want to change it",
       "dateOfBirth": "1931-10-10T00:00:00Z"
-    },
+    }
   
   }
 ```

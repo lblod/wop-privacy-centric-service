@@ -1,0 +1,22 @@
+[
+  {
+    "nsType": "people",
+    "property": "dateOfBirth",
+    "cardinality": "ONE"
+  },
+  {
+    "nsType": "people",
+    "property": "nationalities",
+    "cardinality": "MANY"
+  },
+  {
+    "nsType": "people",
+    "property": "gender",
+    "cardinality": "ONE"
+  },
+  {
+    "nsType": "people",
+    "property": "registration",
+    "cardinality": "ONE"
+  }
+]

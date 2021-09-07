@@ -7,7 +7,7 @@ services:
       DEFAULT_ACCESS_CONTROL_ALLOW_ORIGIN_HEADER: "*"
     restart: always
     ports:
-      - "80:80"
+      - "8083:80"
   dispatcher:
     image: semtech/mu-dispatcher:2.1.0-beta.1
     volumes:
@@ -49,4 +49,7 @@ services:
     environment:
       LOGGING_LEVEL: "DEBUG" # optionals
       SPARQL_QUERY_STORE_PATH: "/config"
+      DEFAULT_GRAPH: "http://mu.semte.ch/graphs/contacthub/141d9d6b-54af-4d17-b313-8d1c30bc3f5b/ChAdmin"
+      REASON_GRAPH: "http://mu.semte.ch/graphs/contacthub/141d9d6b-54af-4d17-b313-8d1c30bc3f5b/ChAdmin"
+      FIELD_CONFIG: "/config/fields.json"
     restart: always

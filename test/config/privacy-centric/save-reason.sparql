@@ -6,7 +6,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 INSERT DATA {
         GRAPH <${graphReason}> {
-          <http://data.lblod.info/reasons/${id}> a  reason:Reason;
+          <http://whatever.com/reasons/${id}> a  reason:Reason;
                                        mu:uuid "${id}";
                                         reason:requester  "${data.requester}";
                                         reason:property  "${property}";

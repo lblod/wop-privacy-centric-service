@@ -1,0 +1,35 @@
+<#assign data = dataJson?eval_json>
+<#assign id = _uuid()>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
+
+
+DELETE {
+  GRAPH <${graph}> {
+   <http://data.lblod.info/id/personen/${data.id}> persoon:heeftGeboorte ?heeftGeboorte.
+   ?heeftGeboorte ?p ?o.
+  }
+}
+  INSERT  {
+    GRAPH <${graph}> {
+    <#-- <#list relationships as relationship> -->
+        <http://data.lblod.info/id/geboortes/${id}>  a <https://data.vlaanderen.be/ns/persoon#Geboorte>;
+                                                                          mu:uuid "${id}";
+                                                                         persoon:heeftGeboorte "${data.dateOfBirth}"^^xsd:dateTime.
+        <http://data.lblod.info/id/personen/${data.id}>  persoon:heeftGeboorte <http://data.lblod.info/id/geboortes/${id}>.
+
+     <#--</#list>-->
+    }
+  }
+WHERE  {
+    GRAPH <${graph}> {
+    optional {
+             <http://data.lblod.info/id/personen/${data.id}> persoon:heeftGeboorte  ?heeftGeboorte.
+              ?heeftGeboorte ?p ?o.
+    }
+
+
+    }
+
+}
