@@ -1,0 +1,22 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
+PREFIX reason: <http://data.lblod.info/reason#>
+
+select ?dateOfBirth ?registrationNumber ?genderId where {
+graph <${graph}> {
+  optional {
+    <http://data.lblod.info/id/personen/${personId}> <https://data.vlaanderen.be/ns/persoon#geslacht> ?geslacht.
+    ?geslacht mu:uuid ?genderId.
+  }
+  optional {
+    <http://data.lblod.info/id/personen/${personId}> persoon:heeftGeboorte ?heeftGeboorte.
+    ?heeftGeboorte persoon:datum ?dateOfBirth.
+  }
+  optional {
+    <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#registratie> ?registratie.
+    ?registratie <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> ?identificator.
+    ?identificator<https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> ?registrationNumber.
+  }
+}
+}

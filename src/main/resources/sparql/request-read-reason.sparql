@@ -1,0 +1,17 @@
+
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
+PREFIX reason: <http://data.lblod.info/reason#>
+    <#assign reasonId = _uuid()>
+
+INSERT DATA {
+    graph <${graph}> {
+          <http://data.lblod.info/id/person-information-reads/${reasonId}>  a reason:PersonInformationRead;
+                                                           mu:uuid "${reasonId}";
+                                                           reason:date "${time}"^^xsd:dateTime;
+                                                           reason:requester  <${accountUri}>;
+                                                           reason:person <http://data.lblod.info/id/personen/${personId}> ;
+                                                           reason:code  <${code}>.
+   }
+}

@@ -13,23 +13,27 @@ defmodule Acl.UserGroups.Config do
         name: "public",
         useage: [:read],
         access: %AlwaysAccessible{},
-        graphs: [ %GraphSpec{
+        graphs: [%GraphSpec{
           graph: "http://mu.semte.ch/graphs/public",
           constraint: %ResourceConstraint{
             resource_types: [
               # todo add classes
             ]
-          } } ] },
+          }
+        }]
+      },
       %GroupSpec{
         name: "harvesting",
         useage: [:write, :read_for_write, :read],
         access: %AlwaysAccessible{},
-        graphs: [ %GraphSpec{
+        graphs: [%GraphSpec{
           graph: "http://mu.semte.ch/graphs/harvesting",
           constraint: %ResourceConstraint{
             resource_types: [
             ]
-          } } ] },
+          }
+        }]
+      },
       %GraphCleanup{
         originating_graph: "http://mu.semte.ch/application",
         useage: [:read, :write],

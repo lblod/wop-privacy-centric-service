@@ -1,15 +1,11 @@
 server:
   port: ${SERVER_PORT:8081}
 
-fields:
-  config: ${FIELD_CONFIG:classpath:fields.json}
 sparql:
   endpoint: ${SPARQL_ENDPOINT:http://localhost:8890/sparql}
-  defaultGraphUri: ${DEFAULT_GRAPH:http://mu.semte.ch/application}
-  reasonGraphUri: ${REASON_GRAPH:http://mu.semte.ch/application}
-  defaultBatchSize: ${BATCH_SIZE:100}
-  defaultLimitSize: ${LIMIT_SIZE:100}
-  maxRetry: ${MAX_RETRY:5}
+  defaultGraphUri: ${DEFAULT_GRAPH:http://mu.semte.ch/graphs/contacthub/141d9d6b-54af-4d17-b313-8d1c30bc3f5b/ChAdmin}
+  sessionGraphUri: ${SESSION_GRAPH:http://mu.semte.ch/graphs/sessions}
+  baseUrl: ${BASE_URL:https://data.lblod.info}
   queryStore:
     path: ${SPARQL_QUERY_STORE_PATH:classpath*:sparql}
 

@@ -3,12 +3,12 @@ kind: pipeline
 type: docker
 name: verify-pr
 steps:
-- name: build-dry-run
-  image: plugins/docker
-  settings:
-    repo: lblod/privacy-centric-service
-    dry_run: true
-    purge: true
+  - name: build-dry-run
+    image: plugins/docker
+    settings:
+      repo: lblod/privacy-centric-service
+      dry_run: true
+      purge: true
 trigger:
   event:
     - pull_request
@@ -17,15 +17,15 @@ kind: pipeline
 type: docker
 name: push-latest-build
 steps:
-- name: push-latest-build
-  image: plugins/docker
-  settings:
-    repo: lblod/privacy-centric-service
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-    purge: true
+  - name: push-latest-build
+    image: plugins/docker
+    settings:
+      repo: lblod/privacy-centric-service
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      purge: true
 trigger:
   branch:
     - master
@@ -34,22 +34,22 @@ kind: pipeline
 type: docker
 name: release
 steps:
-- name: build-dry-run
-  image: plugins/docker
-  settings:
-    repo: lblod/privacy-centric-service
-    dry_run: true
-    purge: true
-- name: push-tagged-build
-  image: plugins/docker
-  settings:
-    repo: lblod/privacy-centric-service
-    tags: ${DRONE_TAG##v}
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-    purge: true
+  - name: build-dry-run
+    image: plugins/docker
+    settings:
+      repo: lblod/privacy-centric-service
+      dry_run: true
+      purge: true
+  - name: push-tagged-build
+    image: plugins/docker
+    settings:
+      repo: lblod/privacy-centric-service
+      tags: ${DRONE_TAG##v}
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      purge: true
 trigger:
   event:
     - tag

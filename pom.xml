@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.4.3</version>
-    <relativePath /> <!-- lookup parent from repository -->
+    <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>mu.semte.ch</groupId>
   <artifactId>privacy-centric-service</artifactId>
@@ -45,6 +46,7 @@
     <commons-text.version>1.9</commons-text.version>
     <poi.version>5.0.0</poi.version>
     <mu-java.version>1.0.16-SNAPSHOT</mu-java.version>
+    <json-path.version>2.6.0</json-path.version>
   </properties>
   <scm>
     <connection>
@@ -72,7 +74,21 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-commons</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>${json-path.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jasminb</groupId>
+      <artifactId>jsonapi-converter</artifactId>
+      <version>0.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

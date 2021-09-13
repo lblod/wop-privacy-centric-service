@@ -15,13 +15,15 @@ This has impact on the implementation for the screens which contain sensitive da
 
 ```
   {
-    "operation":"read",
-    "type": "people",
-    "property":"dateOfBirth",
+    "type": "person-detail-requests",
+    "property":"date-of-birth",
     "data": {
       "id":"aaca86ad-c883-410a-a4e0-070480a2",
-      "requester": "nbittich",
-      "reason": "i want to read it"
+      "reason": {
+            "requester": "nbittich",
+            "code": "http://some-code-list.com/ABC"
+      }
+
     }
   }
 ```
@@ -30,15 +32,16 @@ This has impact on the implementation for the screens which contain sensitive da
 
 ```
   {
-    "operation":"update",
-    "type": "people",
-    "property":"dateOfBirth",
+    "type": "person-detail-updates",
+    "property":"date-of-birth",
     "data": {
       "id":"aaca86ad-c883-410a-a4e0-070480a2",
-      "requester": "nbittich",
-      "reason": "i want to change it",
-      "dateOfBirth": "1931-10-10T00:00:00Z"
+      "dateOfBirth": "1931-10-10T00:00:00Z",
+      "reason": {
+            "requester": "nbittich",
+            "code": "http://some-code-list.com/ABC"
+      }
+
     }
-  
   }
 ```
