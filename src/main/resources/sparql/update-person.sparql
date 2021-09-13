@@ -2,7 +2,7 @@
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
-PREFIX reason: <http://data.lblod.info/reason#>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
 
 DELETE {
@@ -31,12 +31,12 @@ INSERT  {
 
     <#if dateOfBirth?has_content>
       <#assign dateOfBirthId = _uuid()>
-      <http://data.lblod.info/id/person-information-updates/${reasonId}>  a reason:PersonInformationUpdate;
+      <http://data.lblod.info/id/person-information-updates/${reasonId}>  a ext:PersonInformationUpdate;
                                                        mu:uuid "${reasonId}";
-                                                       reason:date "${time}"^^xsd:dateTime;
-                                                       reason:requester  <${accountUri}>;
-                                                       reason:person <http://data.lblod.info/id/personen/${personId}> ;
-                                                       reason:code  <${code}>.
+                                                       ext:date "${time}"^^xsd:dateTime;
+                                                       ext:requester  <${accountUri}>;
+                                                       ext:person <http://data.lblod.info/id/personen/${personId}> ;
+                                                       ext:code  <${code}>.
 
 
 

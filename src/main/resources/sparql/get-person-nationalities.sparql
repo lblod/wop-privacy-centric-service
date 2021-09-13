@@ -1,7 +1,6 @@
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
-PREFIX reason: <http://data.lblod.info/reason#>
 
 select ?nationaliteitId where {
 graph <${graph}> {

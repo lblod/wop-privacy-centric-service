@@ -2,16 +2,17 @@
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
-PREFIX reason: <http://data.lblod.info/reason#>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+
     <#assign reasonId = _uuid()>
 
 INSERT DATA {
     graph <${graph}> {
-          <http://data.lblod.info/id/person-information-reads/${reasonId}>  a reason:PersonInformationRead;
+          <http://data.lblod.info/id/person-information-reads/${reasonId}>  a ext:PersonInformationRead;
                                                            mu:uuid "${reasonId}";
-                                                           reason:date "${time}"^^xsd:dateTime;
-                                                           reason:requester  <${accountUri}>;
-                                                           reason:person <http://data.lblod.info/id/personen/${personId}> ;
-                                                           reason:code  <${code}>.
+                                                           ext:date "${time}"^^xsd:dateTime;
+                                                           ext:requester  <${accountUri}>;
+                                                           ext:person <http://data.lblod.info/id/personen/${personId}> ;
+                                                           ext:code  <${code}>.
    }
 }
