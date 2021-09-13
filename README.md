@@ -14,34 +14,65 @@ This has impact on the implementation for the screens which contain sensitive da
 ### Read (POST):
 
 ```
-  {
-    "type": "person-detail-requests",
-    "property":"date-of-birth",
-    "data": {
-      "id":"aaca86ad-c883-410a-a4e0-070480a2",
-      "reason": {
-            "requester": "nbittich",
-            "code": "http://some-code-list.com/ABC"
-      }
-
-    }
-  }
+          {
+             "data":{
+                "type":"person-information-requests",
+                "relationships":{
+                   "person":{
+                      "data":{
+                         "type":"people",
+                         "id":"fd88cb5a70db029111aa23a086b86f37"
+                      }
+                   },
+                   "reason":{
+                      "data":{
+                         "type":"request-reasons",
+                         "id":"3aeec145-acf3-4b6e-9c00-5b8e285736e0"
+                      }
+                   }
+                }
+             }
+          }
 ```
 
 ### Update (POST):
 
 ```
-  {
-    "type": "person-detail-updates",
-    "property":"date-of-birth",
-    "data": {
-      "id":"aaca86ad-c883-410a-a4e0-070480a2",
-      "dateOfBirth": "1931-10-10T00:00:00Z",
-      "reason": {
-            "requester": "nbittich",
-            "code": "http://some-code-list.com/ABC"
-      }
-
-    }
-  }
+ {
+             "data":{
+                "type":"person-information-updates",
+                "attributes":{
+                   "date-of-birth":"2021-02-03",
+                   "registration":"84.04.17-319.90"
+                },
+                "relationships":{
+                   "person":{
+                      "data":{
+                         "type":"people",
+                         "id":"fd88cb5a70db029111aa23a086b86f37"
+                      }
+                   },
+                   "nationalities":
+                      {
+                         "data":[{
+                            "type":"nationalities",
+                            "id":"b461dca9e69a540cd821559f0873fe46"
+                         }]
+                      }
+                   ,
+                   "gender":{
+                      "data":{
+                         "type":"genders",
+                         "id":"5ab0e9b8a3b2ca7c5e000028"
+                      }
+                   },
+                   "reason":{
+                      "data":{
+                         "type":"request-reasons",
+                         "id":"3aeec145-acf3-4b6e-9c00-5b8e285736e0"
+                      }
+                   }
+                }
+             }
+          }
 ```
