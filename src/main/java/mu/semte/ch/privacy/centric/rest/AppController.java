@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static mu.semte.ch.lib.Constants.HEADER_MU_SESSION_ID;
 
 
 @RestController
@@ -22,19 +23,23 @@ public class AppController {
     this.requestService = requestService;
   }
 
-  @PostMapping(value= "/person-information-updates", consumes = "application/vnd.api+json")
-  public ResponseEntity<Void> personInformationUpdates(@RequestBody String payload, HttpServletRequest request){
-        requestService.processUpdate(payload, getSessionIdHeader(request));
-        return ResponseEntity.noContent().build();
+  @PostMapping(value = "/person-information-updates",
+               consumes = "application/vnd.api+json")
+  public ResponseEntity<Void> personInformationUpdates(@RequestBody String payload, HttpServletRequest request) {
+    requestService.processUpdate(payload, getSessionIdHeader(request));
+    return ResponseEntity.noContent().build();
   }
 
-  @PostMapping(value="/person-information-requests", consumes = "application/vnd.api+json", produces = "application/vnd.api+json")
-  public ResponseEntity<String> personInformationRequests(@RequestBody String payload, HttpServletRequest request){
+  @PostMapping(value = "/person-information-requests",
+               consumes = "application/vnd.api+json",
+               produces = "application/vnd.api+json")
+  public ResponseEntity<String> personInformationRequests(@RequestBody String payload, HttpServletRequest request) {
     return ResponseEntity.ok(requestService.processRead(payload, getSessionIdHeader(request)));
   }
-  private String getSessionIdHeader(HttpServletRequest request){
-    String sessionIdHeader = request.getHeader("MU-SESSION-ID");
-    if(StringUtils.isEmpty(sessionIdHeader)){
+
+  private String getSessionIdHeader(HttpServletRequest request) {
+    String sessionIdHeader = request.getHeader(HEADER_MU_SESSION_ID);
+    if (StringUtils.isEmpty(sessionIdHeader)) {
       throw new RuntimeException("Session header is missing");
     }
     return sessionIdHeader;

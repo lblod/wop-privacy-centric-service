@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -41,45 +40,45 @@ public class ScratchTest {
           }
           """;
   String updateRequest = """
- {
-             "data":{
-                "type":"person-information-updates",
-                "attributes":{
-                   "date-of-birth":"2021-02-03",
-                   "registration":"84.04.17-319.90"
-                },
-                "relationships":{
-                   "person":{
+          {
                       "data":{
-                         "type":"people",
-                         "id":"fd88cb5a70db029111aa23a086b86f37"
-                      }
-                   },
-                   "nationalities":
-                      {
-                         "data":[{
-                            "type":"nationalities",
-                            "id":"b461dca9e69a540cd821559f0873fe46"
-                         }]
-                      }
-                   ,
-                   "gender":{
-                      "data":{
-                         "type":"genders",
-                         "id":"5ab0e9b8a3b2ca7c5e000028"
-                      }
-                   },
-                   "reason":{
-                      "data":{
-                         "type":"request-reasons",
-                         "id":"3aeec145-acf3-4b6e-9c00-5b8e285736e0"
+                         "type":"person-information-updates",
+                         "attributes":{
+                            "date-of-birth":"2021-02-03",
+                            "registration":"84.04.17-319.90"
+                         },
+                         "relationships":{
+                            "person":{
+                               "data":{
+                                  "type":"people",
+                                  "id":"fd88cb5a70db029111aa23a086b86f37"
+                               }
+                            },
+                            "nationalities":
+                               {
+                                  "data":[{
+                                     "type":"nationalities",
+                                     "id":"b461dca9e69a540cd821559f0873fe46"
+                                  }]
+                               }
+                            ,
+                            "gender":{
+                               "data":{
+                                  "type":"genders",
+                                  "id":"5ab0e9b8a3b2ca7c5e000028"
+                               }
+                            },
+                            "reason":{
+                               "data":{
+                                  "type":"request-reasons",
+                                  "id":"3aeec145-acf3-4b6e-9c00-5b8e285736e0"
+                               }
+                            }
+                         }
                       }
                    }
-                }
-             }
-          }
-                   
-          """;
+                            
+                   """;
 
   String readResponse = """
           {
@@ -122,31 +121,31 @@ public class ScratchTest {
           """;
 
   @Test
-  public void test(){
-  ResourceConverter converter = new ResourceConverter("https://data.lblod.info",
-                                                      Gender.class, Nationality.class, Person.class, PersonInformationUpdate.class,
-                                                      PersonInformationRequest.class,
-                                                      RequestReason.class);
-  JSONAPIDocument<PersonInformationUpdate> update = converter.readDocument(checkIdOrCreate(updateRequest).getBytes(StandardCharsets.UTF_8), PersonInformationUpdate.class);
-  PersonInformationUpdate piu = update.get();
-   System.out.println(piu);
+  public void test() {
+    ResourceConverter converter = new ResourceConverter("https://data.lblod.info",
+                                                        Gender.class, Nationality.class, Person.class, PersonInformationUpdate.class,
+                                                        PersonInformationRequest.class,
+                                                        RequestReason.class);
+    JSONAPIDocument<PersonInformationUpdate> update = converter.readDocument(checkIdOrCreate(updateRequest).getBytes(StandardCharsets.UTF_8), PersonInformationUpdate.class);
+    PersonInformationUpdate piu = update.get();
+    System.out.println(piu);
 
-   JSONAPIDocument<PersonInformationRequest> read = converter.readDocument(checkIdOrCreate(readRequest).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
-   PersonInformationRequest pir = read.get();
-   System.out.println(pir);
-   JSONAPIDocument<PersonInformationRequest> readResp = converter.readDocument(checkIdOrCreate(readResponse).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
-   PersonInformationRequest pir2 = readResp.get();
-   System.out.println(pir2);
+    JSONAPIDocument<PersonInformationRequest> read = converter.readDocument(checkIdOrCreate(readRequest).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
+    PersonInformationRequest pir = read.get();
+    System.out.println(pir);
+    JSONAPIDocument<PersonInformationRequest> readResp = converter.readDocument(checkIdOrCreate(readResponse).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
+    PersonInformationRequest pir2 = readResp.get();
+    System.out.println(pir2);
   }
 
   @SneakyThrows
-  private String checkIdOrCreate(String jsonApiData){
+  private String checkIdOrCreate(String jsonApiData) {
     var mapper = new ObjectMapper();
     JsonNode jsonNode = mapper.readTree(jsonApiData);
     JsonNode data = jsonNode.get("data");
     JsonNode id = data.get("id");
-    if(id == null || StringUtils.isEmpty(id.asText())) {
-      ((ObjectNode)data).put("id", ModelUtils.uuid());
+    if (id == null || StringUtils.isEmpty(id.asText())) {
+      ((ObjectNode) data).put("id", ModelUtils.uuid());
     }
     return jsonNode.toString();
   }
