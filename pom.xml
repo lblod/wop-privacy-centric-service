@@ -45,7 +45,7 @@
     <guava.version>29.0-jre</guava.version>
     <commons-text.version>1.9</commons-text.version>
     <poi.version>5.0.0</poi.version>
-    <mu-java.version>1.0.16-SNAPSHOT</mu-java.version>
+    <mu-java.version>1.0.16</mu-java.version>
     <json-path.version>2.6.0</json-path.version>
   </properties>
   <scm>
