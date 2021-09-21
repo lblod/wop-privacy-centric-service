@@ -9,7 +9,7 @@
   </parent>
   <groupId>mu.semte.ch</groupId>
   <artifactId>privacy-centric-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>privacy-centric-service</name>
   <description>Privacy centric service</description>
   <licenses>
