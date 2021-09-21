@@ -8,11 +8,24 @@ reason is given.
 The properties will not be returned from mu-cl-resources anymore, but rather by this service.
 
 This has impact on the implementation for the screens which contain sensitive data.
-
+```
+  privacy:
+    image: lblod/privacy-centric-service:0.0.1
+    environment:
+      SERVER_PORT: "80"
+      SPARQL_ENDPOINT: "http://db:8890/sparql"
+      LOGGING_LEVEL: "INFO"
+      DEFAULT_GRAPH: "http://mu.semte.ch/graphs/contacthub/141d9d6b-54af-4d17-b313-8d1c30bc3f5b/ChAdmin"
+      SESSION_GRAPH: "http://mu.semte.ch/graphs/sessions"
+```
 ## Example request
 
 ### Read (POST):
+http://localhost/person-information-requests
 
+`Accept: application/vnd.api+json`
+
+`Content-Type: application/vnd.api+json`
 ```
           {
              "data":{
@@ -36,7 +49,11 @@ This has impact on the implementation for the screens which contain sensitive da
 ```
 
 ### Update (POST):
+http://localhost/person-information-updates
 
+`Accept: application/vnd.api+json`
+
+`Content-Type: application/vnd.api+json`
 ```
  {
              "data":{
