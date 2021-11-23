@@ -5,6 +5,8 @@ PREFIX persoon: <https://data.vlaanderen.be/ns/persoon#>
 select ?nationaliteitId where {
 graph <${graph}> {
     <http://data.lblod.info/id/personen/${personId}> <https://data.vlaanderen.be/ns/persoon#heeftNationaliteit> ?nationaliteit.
-    ?nationaliteit mu:uuid ?nationaliteitId.
+  }
+  graph <${appGraph}> {
+       ?nationaliteit mu:uuid ?nationaliteitId.
   }
 }

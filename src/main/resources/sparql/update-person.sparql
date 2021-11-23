@@ -11,15 +11,18 @@ DELETE {
       <http://data.lblod.info/id/personen/${personId}> persoon:heeftGeboorte ?heeftGeboorte.
       ?heeftGeboorte ?p ?o.
     </#if>
+
     <#if registration?has_content>
        <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#registratie> ?registration.
        ?registration <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> ?identificator.
        ?identificator ?x ?y.
        ?registration ?t ?j.
     </#if>
+
     <#if gender?has_content>
        <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#geslacht> ?geslacht.
     </#if>
+
     <#if nationaliteits?has_content>
        <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#heeftNationaliteit> ?nationaliteit.
     </#if>
@@ -43,30 +46,40 @@ INSERT  {
       <http://data.lblod.info/id/geboortes/${dateOfBirthId}>  a <https://data.vlaanderen.be/ns/persoon#Geboorte>;
                                                                             mu:uuid "${dateOfBirthId}";
                                                                             persoon:datum "${dateOfBirth}"^^xsd:dateTime.
+
       <http://data.lblod.info/id/personen/${personId}>  persoon:heeftGeboorte <http://data.lblod.info/id/geboortes/${dateOfBirthId}>.
+
       <http://data.lblod.info/id/person-information-updates/${reasonId}>  persoon:heeftGeboorte <http://data.lblod.info/id/geboortes/${dateOfBirthId}>.
     </#if>
+
     <#if registration?has_content>
       <#assign registrationId = _uuid()>
       <#assign gestId = _uuid()>
       <http://data.lblod.info/id/gestructureerdeIdentificatoren/${gestId}> a <https://data.vlaanderen.be/ns/generiek#GestructureerdeIdentificator>;
                                                                             mu:uuid "${gestId}";
                                                                             <https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> "${registration}".
+
       <http://data.lblod.info/id/identificatoren/${registrationId}> a <http://www.w3.org/ns/adms#Identifier>;
                                                                                    mu:uuid "${registrationId}";
                                                                                    <http://www.w3.org/2004/02/skos/core#notation> "Rijksregisternummer";
                                                                                    <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> <http://data.lblod.info/id/gestructureerdeIdentificatoren/${gestId}>.
+
       <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#registratie> <http://data.lblod.info/id/identificatoren/${registrationId}>.
+
       <http://data.lblod.info/id/person-information-updates/${reasonId}>  <https://data.vlaanderen.be/ns/persoon#registratie> <http://data.lblod.info/id/identificatoren/${registrationId}>.
 
     </#if>
+
     <#if gender?has_content>
       <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#geslacht> <${gender}>.
     </#if>
+
    <#if nationaliteits?has_content>
       <#list nationaliteits as nationaliteit>
+
         <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#heeftNationaliteit> <${nationaliteit}>.
         <http://data.lblod.info/id/person-information-updates/${reasonId}>  <https://data.vlaanderen.be/ns/persoon#heeftNationaliteit> <${nationaliteit}>.
+
       </#list>
     </#if>
     }
@@ -79,6 +92,7 @@ WHERE  {
         ?heeftGeboorte ?p ?o.
       }
     </#if>
+
     <#if registration?has_content>
       optional {
         <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#registratie> ?registration.
@@ -87,11 +101,13 @@ WHERE  {
         ?registration ?t ?j.
       }
     </#if>
+
       <#if gender?has_content>
         optional {
           <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#geslacht> ?geslacht.
         }
       </#if>
+
       <#if nationaliteits?has_content>
         optional {
           <http://data.lblod.info/id/personen/${personId}>  <https://data.vlaanderen.be/ns/persoon#heeftNationaliteit> ?nationaliteit.

@@ -42,6 +42,8 @@ public class RequestService {
   private String sessionGraphUri;
   @Value("${sparql.defaultGraphUri}")
   private String graph;
+  @Value("${sparql.appGraphUri}")
+  private String appGraph;
 
   private final SparqlQueryStore queryStore;
   private final SparqlClient sparqlClient;
@@ -125,6 +127,7 @@ public class RequestService {
     checkNotNull(accountUri, "Account must be set!");
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("graph", graph);
+    parameters.put("appGraph", appGraph);
     parameters.put("personId", personId);
     String getPersonInfo = queryStore.getQueryWithParameters("getPersonInfo", parameters);
 
