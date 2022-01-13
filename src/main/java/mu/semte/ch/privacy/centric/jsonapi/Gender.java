@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import mu.semte.ch.lib.utils.ModelUtils;
 
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

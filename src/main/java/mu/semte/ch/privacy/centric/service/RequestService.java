@@ -12,6 +12,7 @@ import mu.semte.ch.lib.utils.SparqlClient;
 import mu.semte.ch.lib.utils.SparqlQueryStore;
 import mu.semte.ch.privacy.centric.jsonapi.Gender;
 import mu.semte.ch.privacy.centric.jsonapi.Nationality;
+import mu.semte.ch.privacy.centric.jsonapi.PersonInformationAsk;
 import mu.semte.ch.privacy.centric.jsonapi.PersonInformationRequest;
 import mu.semte.ch.privacy.centric.jsonapi.PersonInformationUpdate;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,30 +108,52 @@ public class RequestService {
       parameters.put("time", formattedDate(LocalDateTime.now()));
       parameters.put("accountUri", accountUri);
       parameters.put("code", reasonUri);
-      var q = queryStore.getQueryWithParameters("updatePerson", parameters);
-      sparqlClient.executeUpdateQuery(q);
+      var deleteDataPerson = queryStore.getQueryWithParameters("deleteDataPerson", parameters);
+      sparqlClient.executeUpdateQuery(deleteDataPerson);
+      var insertDataPerson = queryStore.getQueryWithParameters("insertDataPerson", parameters);
+      sparqlClient.executeUpdateQuery(insertDataPerson);
     }
   }
 
-
   @SneakyThrows
-  public String processRead(String payload, String sessionId) {
-    var responseBuilder = PersonInformationRequest.builder();
-    var document = resourceConverter.readDocument(checkIdOrCreate(payload).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
-    var readRequest = ofNullable(document.get()).orElseThrow(() -> new RuntimeException("could not parse request"));
-    checkNotNull(readRequest.getPerson(), "Person must be set!");
-    checkNotNull(readRequest.getReason(), "Reason must be set!");
-    String reasonId = readRequest.getReason().getId();
-    String personId = readRequest.getPerson().getId();
+  public String processCheckPersonInfo(String personId, String sessionId) {
     String accountUri = getAccountBySession(sessionId);
-    checkNotNull(personId, "Person id must be set!");
-    checkNotNull(reasonId, "Reason must be set!");
     checkNotNull(accountUri, "Account must be set!");
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("graph", graph);
-    parameters.put("appGraph", appGraph);
-    parameters.put("personId", personId);
-    String getPersonInfo = queryStore.getQueryWithParameters("getPersonInfo", parameters);
+    checkNotNull(personId, "Person id must be set!");
+    checkArgument(isNotEmpty(personId), "Person id must be set!");
+    var build = buildPersonInfo(personId).build();
+    var responseBuilder = PersonInformationAsk.builder();
+    ofNullable(build.getDateOfBirth())
+            .filter(StringUtils::isNotEmpty)
+            .ifPresent(dateOfBirth -> responseBuilder.dateOfBirth("*".repeat(dateOfBirth.length())));
+    ofNullable(build.getRegistrationNumber())
+            .filter(StringUtils::isNotEmpty)
+            .ifPresent(rn -> responseBuilder.registrationNumber("*".repeat(rn.length())));
+    ofNullable(build.getGender())
+            .map(Gender::getId)
+            .filter(StringUtils::isNotEmpty)
+            .ifPresent(genderId -> responseBuilder.gender(Gender.builder().id("*".repeat(genderId.length())).build()));
+
+    List<Nationality> nationalities = ofNullable(build.getNationalities())
+            .stream().flatMap(Collection::stream)
+            .map(Nationality::getId)
+            .filter(StringUtils::isNotEmpty)
+            .map(id -> Nationality.builder().id("*".repeat(id.length())).build())
+            .collect(Collectors.toList());
+    responseBuilder.nationalities(nationalities);
+
+    byte[] responseBytes = resourceConverter.writeDocument(new JSONAPIDocument<>(responseBuilder.build()));
+    return new String(responseBytes);
+  }
+
+  private PersonInformationRequest.PersonInformationRequestBuilder buildPersonInfo(String personId) {
+    var responseBuilder = PersonInformationRequest.builder();
+    Map<String, Object> queryParameters = Map.of(
+            "graph", this.graph,
+            "appGraph", appGraph,
+            "personId", personId
+    );
+    String getPersonInfo = queryStore.getQueryWithParameters("getPersonInfo", queryParameters);
 
     List<Map<String, String>> res = sparqlClient.executeSelectQueryAsListMap(getPersonInfo);
     if (!res.isEmpty()) {
@@ -142,7 +166,7 @@ public class RequestService {
       }
     }
 
-    String getPersonNationalities = queryStore.getQueryWithParameters("getPersonNationalities", parameters);
+    String getPersonNationalities = queryStore.getQueryWithParameters("getPersonNationalities", queryParameters);
     List<Map<String, String>> nationaliteits = sparqlClient.executeSelectQueryAsListMap(getPersonNationalities);
     if (!nationaliteits.isEmpty()) {
       responseBuilder.nationalities(nationaliteits.stream()
@@ -151,13 +175,35 @@ public class RequestService {
                                                   .map(n -> Nationality.builder().id(n).build())
                                                   .collect(Collectors.toList()));
     }
+    return responseBuilder;
+  }
+
+  @SneakyThrows
+  public String processRead(String payload, String sessionId) {
+    var document = resourceConverter.readDocument(checkIdOrCreate(payload).getBytes(StandardCharsets.UTF_8), PersonInformationRequest.class);
+    var readRequest = ofNullable(document.get()).orElseThrow(() -> new RuntimeException("could not parse request"));
+    checkNotNull(readRequest.getPerson(), "Person must be set!");
+    checkNotNull(readRequest.getReason(), "Reason must be set!");
+    String reasonId = readRequest.getReason().getId();
+    String personId = readRequest.getPerson().getId();
+    String accountUri = getAccountBySession(sessionId);
+    checkNotNull(personId, "Person id must be set!");
+    checkNotNull(reasonId, "Reason must be set!");
+    checkNotNull(accountUri, "Account must be set!");
+
+    var responseBuilder = this.buildPersonInfo(personId);
+
     responseBuilder.reason(readRequest.getReason());
 
     String reasonUri = getReasonUri(reasonId);
-    parameters.put("code", reasonUri);
-    parameters.put("time", formattedDate(LocalDateTime.now()));
-    parameters.put("accountUri", accountUri);
-    String requestReadReason = queryStore.getQueryWithParameters("requestReadReason", parameters);
+    String requestReadReason = queryStore.getQueryWithParameters("requestReadReason", Map.of(
+            "graph", this.graph,
+            "appGraph", appGraph,
+            "personId", personId,
+            "code", reasonUri,
+            "time", formattedDate(LocalDateTime.now()),
+            "accountUri", accountUri
+    ));
     sparqlClient.executeUpdateQuery(requestReadReason);
 
     byte[] responseBytes = resourceConverter.writeDocument(new JSONAPIDocument<>(responseBuilder.build()));

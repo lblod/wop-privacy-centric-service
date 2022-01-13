@@ -6,6 +6,7 @@ import mu.semte.ch.lib.config.CoreConfig;
 import mu.semte.ch.privacy.centric.jsonapi.Gender;
 import mu.semte.ch.privacy.centric.jsonapi.Nationality;
 import mu.semte.ch.privacy.centric.jsonapi.Person;
+import mu.semte.ch.privacy.centric.jsonapi.PersonInformationAsk;
 import mu.semte.ch.privacy.centric.jsonapi.PersonInformationRequest;
 import mu.semte.ch.privacy.centric.jsonapi.PersonInformationUpdate;
 import mu.semte.ch.privacy.centric.jsonapi.RequestReason;
@@ -27,6 +28,7 @@ public class ApplicationConfig {
     return new ResourceConverter(baseUrl,
                                  Gender.class, Nationality.class, Person.class, PersonInformationUpdate.class,
                                  PersonInformationRequest.class,
+                                 PersonInformationAsk.class,
                                  RequestReason.class);
   }
 

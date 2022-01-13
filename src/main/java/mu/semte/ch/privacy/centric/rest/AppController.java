@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import mu.semte.ch.privacy.centric.service.RequestService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,12 @@ public class AppController {
                produces = "application/vnd.api+json")
   public ResponseEntity<String> personInformationRequests(@RequestBody String payload, HttpServletRequest request) {
     return ResponseEntity.ok(requestService.processRead(payload, getSessionIdHeader(request)));
+  }
+
+  @PostMapping(value = "/person-information-ask/{personId}",
+               produces = "application/vnd.api+json")
+  public ResponseEntity<String> checkPersonInfo(@PathVariable("personId") String personId, HttpServletRequest request) {
+    return ResponseEntity.ok(requestService.processCheckPersonInfo(personId, getSessionIdHeader(request)));
   }
 
   private String getSessionIdHeader(HttpServletRequest request) {

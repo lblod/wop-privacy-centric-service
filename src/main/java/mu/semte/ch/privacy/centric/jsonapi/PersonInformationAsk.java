@@ -16,14 +16,12 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Type("person-information-requests")
-public class PersonInformationRequest {
+@Type("person-information-asks")
+public class PersonInformationAsk {
 
   @Builder.Default
   @Id
   private String id = ModelUtils.uuid();
-  @Relationship("reason")
-  private RequestReason reason;
   @JsonProperty("date-of-birth")
   private String dateOfBirth;
 

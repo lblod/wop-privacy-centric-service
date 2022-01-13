@@ -12,7 +12,7 @@ import mu.semte.ch.lib.utils.ModelUtils;
 
 import java.util.Collection;
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
