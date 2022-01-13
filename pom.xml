@@ -48,6 +48,8 @@
     <lombok.version>1.18.22</lombok.version>
     <log4j2.version>2.16.0</log4j2.version>
     <json-path.version>2.6.0</json-path.version>
+    <log4j2.version>2.17.0</log4j2.version>
+    <lombok.version>1.18.22</lombok.version>
   </properties>
   <scm>
     <connection>
@@ -69,7 +71,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
-      <version>1.18.20</version>
+      <version>${lombok.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
