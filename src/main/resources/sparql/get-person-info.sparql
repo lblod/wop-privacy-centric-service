@@ -6,6 +6,9 @@ select ?dateOfBirth ?registrationNumber ?genderId where {
 graph <${graph}> {
   optional {
     <http://data.lblod.info/id/personen/${personId}> <https://data.vlaanderen.be/ns/persoon#geslacht> ?geslacht.
+    graph <${appGraph}> {
+       ?geslacht mu:uuid ?genderId.
+    }
   }
   optional {
     <http://data.lblod.info/id/personen/${personId}> persoon:heeftGeboorte ?heeftGeboorte.
@@ -17,9 +20,5 @@ graph <${graph}> {
     ?identificator<https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> ?registrationNumber.
   }
 }
-graph <${appGraph}> {
-  optional {
-   ?geslacht mu:uuid ?genderId.
-  }
-}
+
 }
