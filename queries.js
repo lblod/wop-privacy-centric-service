@@ -63,7 +63,7 @@ export function getPersonInfo(_privacy_graph, appGraph, personId) {
         optional {
           ?personen persoon:registratie ?registratie.
           ?registratie <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> ?identificator.
-          ?identificator<https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> ?registrationNumber.
+          ?identificator <https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> ?registrationNumber.
         }
       }
       
