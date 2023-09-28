@@ -43,29 +43,25 @@ export function getAccount(sessionGraphUri, sessionId) {
   `;
 }
 
-export function getPersonInfo(graph, appGraph, personId) {
+export function getPersonInfo(_privacy_graph, appGraph, personId) {
   return `
     ${PREFIXES}
-    select ?dateOfBirth ?registrationNumber ?genderId where {
-      graph ${sparqlEscapeUri(graph)} {
+    select distinct ?dateOfBirth ?registrationNumber ?genderId where {
+      graph ${sparqlEscapeUri(appGraph)} {
+        ?personen a person:Person; mu:uuid ${sparqlEscapeString(personId)}.
+
         optional {
-           ${sparqlEscapeUri(
-    `http://data.lblod.info/id/personen/${personId}`,
-  )} persoon:geslacht ?geslacht.
-          graph ${sparqlEscapeUri(appGraph)} {
+          ?personen persoon:geslacht ?geslacht.
+          graph ?public {
              ?geslacht mu:uuid ?genderId.
           }
         }
         optional {
-           ${sparqlEscapeUri(
-    `http://data.lblod.info/id/personen/${personId}`,
-  )} persoon:heeftGeboorte ?heeftGeboorte.
+          ?personen persoon:heeftGeboorte ?heeftGeboorte.
           ?heeftGeboorte persoon:datum ?dateOfBirth.
         }
         optional {
-           ${sparqlEscapeUri(
-    `http://data.lblod.info/id/personen/${personId}`,
-  )}  persoon:registratie ?registratie.
+          ?personen persoon:registratie ?registratie.
           ?registratie <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> ?identificator.
           ?identificator<https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> ?registrationNumber.
         }
@@ -75,16 +71,15 @@ export function getPersonInfo(graph, appGraph, personId) {
     
   `;
 }
-export function getPersonNationalities(graph, appGraph, personId) {
+export function getPersonNationalities(_privacy_graph, appGraph, personId) {
   return `
     ${PREFIXES}
-    select ?nationaliteitId where {
-      graph ${sparqlEscapeUri(graph)}{
-          ${sparqlEscapeUri(
-    `http://data.lblod.info/id/personen/${personId}`,
-  )} persoon:heeftNationaliteit ?nationaliteit.
+    select distinct ?nationaliteitId where {
+      graph ${sparqlEscapeUri(appGraph)}{
+          ?personen a person:Person; mu:uuid ${sparqlEscapeString(personId)}.
+          ?personen persoon:heeftNationaliteit ?nationaliteit.
         }
-        graph ${sparqlEscapeUri(appGraph)}  {
+        graph ?public  {
              ?nationaliteit mu:uuid ?nationaliteitId.
         }
       }
