@@ -2,23 +2,14 @@ import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import { uuid } from "mu";
 
 import {
-  askSsn,
-  deleteDataPerson,
   getAccount,
-  getGenderById,
   getReasonById,
   requestReadReason,
-  getNationalityById,
   getPersonInfo,
   getPersonNationalities,
-  insertDataPerson,
+  getPrivacyGraphByAccountQuery,
 } from "./queries";
 
-const DEFAULT_GRAPH_URI =
-  process.env.DEFAULT_GRAPH ||
-  "http://mu.semte.ch/graphs/privacy-centric-graph";
-const APP_GRAPH_URI =
-  process.env.APP_GRAPH || "http://mu.semte.ch/graphs/organisatieportaal";
 const SESSION_GRAPH_URI =
   process.env.SESSION_GRAPH || "http://mu.semte.ch/graphs/sessions";
 
@@ -28,90 +19,18 @@ function checkNotEmpty(argument, message = "This cannont be empty!") {
   }
 }
 export class RequestService {
-  async processUpdate(request, sessionId) {
-    let { data } = request;
-    let { person, reason, gender, nationalities } = data.relationships;
-
-    let dateOfBirth = data.attributes["date-of-birth"];
-    let registrationNumber = data.attributes.registration;
-
-    let reasonId = reason.data?.id;
-    let personId = person.data?.id;
-    checkNotEmpty(personId, "Person id must be set!");
-    checkNotEmpty(reasonId, "Reason must be set!");
-
-    let accountUri = await this.getAccountBySession(sessionId);
-    checkNotEmpty(accountUri, "Account must be set!");
-    let parameters = {};
-    if (nationalities?.data?.length) {
-      const nationaliteits = [];
-      for (const nationality of nationalities.data) {
-        let q = getNationalityById(nationality.id);
-
-        let queryResult = await query(q);
-        if (queryResult.results.bindings.length) {
-          let result = queryResult.results.bindings[0];
-          let nat = result.nationality?.value;
-
-          if (nat?.length) {
-            nationaliteits.push(nat);
-          }
-        }
-      }
-
-      parameters.nationalities = nationaliteits;
-    }
-
-    if (gender?.data?.id) {
-      let q = getGenderById(gender.data.id);
-
-      let queryResult = await query(q);
-
-      if (queryResult.results.bindings.length) {
-        let result = queryResult.results.bindings[0];
-        let genderUri = result.genderUri?.value;
-        if (genderUri?.length) {
-          parameters.gender = genderUri;
-        }
-      }
-    }
-    if (registrationNumber?.length) {
-      if (!(await this.validateRn(personId, registrationNumber))) {
-        throw Error(
-          `Registration number '${registrationNumber}' doesn't belong to person with id '${personId}'`
-        );
-      }
-      parameters.registration = registrationNumber;
-    }
-    if (dateOfBirth?.length) {
-      parameters.dateOfBirth = dateOfBirth;
-    }
-
-    if (Object.keys(parameters).length !== 0) {
-      let deleteDataPersonQuery = deleteDataPerson(DEFAULT_GRAPH_URI, personId);
-
-      await update(deleteDataPersonQuery);
-
-      let reasonUri = await this.getReasonUri(reasonId);
-      let insertDataPersonQuery = insertDataPerson(
-        DEFAULT_GRAPH_URI,
-        accountUri,
-        personId,
-        reasonUri,
-        parameters.dateOfBirth,
-        parameters.registration,
-        parameters.gender,
-        parameters.nationalities
-      );
-      await update(insertDataPersonQuery);
-    }
-  }
-
   async processCheckPersonInfo(personId, sessionId) {
     checkNotEmpty(personId, "Person id must be set!");
     let accountUri = await this.getAccountBySession(sessionId);
-    checkNotEmpty(accountUri, "Account must be set!");
-    let responseBuilder = await this.buildPersonInfo(personId);
+    let { privacyGraph, orgGraph } =
+      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri);
+    checkNotEmpty(privacyGraph, "Privacy graph not found!");
+    checkNotEmpty(orgGraph, "Org graph not found!");
+    let responseBuilder = await this.buildPersonInfo(
+      personId,
+      privacyGraph,
+      orgGraph,
+    );
     if (responseBuilder.dateOfBirth?.length) {
       responseBuilder.dateOfBirth = "**********";
     }
@@ -123,7 +42,7 @@ export class RequestService {
     }
     if (responseBuilder.nationalities?.length) {
       responseBuilder.nationalities = responseBuilder.nationalities.map(
-        (_n) => "**********"
+        (_n) => "**********",
       );
     }
     responseBuilder.type = "person-information-asks";
@@ -140,19 +59,26 @@ export class RequestService {
     checkNotEmpty(reasonId, "Reason must be set!");
 
     let accountUri = await this.getAccountBySession(sessionId);
-    checkNotEmpty(accountUri, "Account must be set!");
 
-    let responseBuilder = await this.buildPersonInfo(personId);
+    let { privacyGraph, orgGraph } =
+      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri);
+    checkNotEmpty(privacyGraph, "Privacy graph not found!");
+    checkNotEmpty(orgGraph, "Org graph not found!");
+    let responseBuilder = await this.buildPersonInfo(
+      personId,
+      privacyGraph,
+      orgGraph,
+    );
 
     responseBuilder.reasonId = reasonId;
     responseBuilder.type = "person-information-requests";
 
     let reasonUri = await this.getReasonUri(reasonId);
     let requestReadReasonQuery = requestReadReason(
-      DEFAULT_GRAPH_URI,
+      privacyGraph,
       accountUri,
       personId,
-      reasonUri
+      reasonUri,
     );
 
     await update(requestReadReasonQuery);
@@ -175,18 +101,17 @@ export class RequestService {
     }
   }
 
-  async buildPersonInfo(personId) {
-    checkNotEmpty(personId, "Person id must be set!");
+  async buildPersonInfo(personId, privacyGraph, orgGraph) {
     let responseBuilder = {};
     let queryParameters = {
-      graph: DEFAULT_GRAPH_URI,
-      appGraph: APP_GRAPH_URI,
+      graph: privacyGraph,
+      appGraph: orgGraph,
       personId,
     };
     let getPersonInfoQuery = getPersonInfo(
       queryParameters.graph,
       queryParameters.appGraph,
-      queryParameters.personId
+      queryParameters.personId,
     );
 
     let queryResult = await query(getPersonInfoQuery);
@@ -200,7 +125,7 @@ export class RequestService {
     let getPersonNationalitiesQuery = getPersonNationalities(
       queryParameters.graph,
       queryParameters.appGraph,
-      queryParameters.personId
+      queryParameters.personId,
     );
     let queryResultNationalities = await query(getPersonNationalitiesQuery);
     responseBuilder.nationalities = queryResultNationalities.results.bindings
@@ -225,6 +150,20 @@ export class RequestService {
     }
   }
 
+  async getOrgGraphAndPrivacyGraphByAccount(accountUri) {
+    checkNotEmpty(sessionId, "No account uri!");
+    let getPrivacyGraphByAccountQ = getPrivacyGraphByAccountQuery(accountUri);
+    const queryResult = await query(getPrivacyGraphByAccountQ);
+    if (queryResult.results.bindings.length) {
+      const result = queryResult.results.bindings[0];
+      return {
+        privacyGraph: result.privacyGraph?.value,
+        orgGraph: result.orgGraph?.value,
+      };
+    } else {
+      return { privacyGraph: null, orgGraph: null };
+    }
+  }
   async getAccountBySession(sessionId) {
     checkNotEmpty(sessionId, "No session id!");
     let getAccountQuery = getAccount(SESSION_GRAPH_URI, sessionId);
@@ -235,34 +174,6 @@ export class RequestService {
     } else {
       return null;
     }
-  }
-
-  async validateSsn(personId, ssn, sessionId) {
-    checkNotEmpty(personId, "Person id must be set!");
-    checkNotEmpty(ssn, "SSN must be set!");
-
-    let accountUri = await this.getAccountBySession(sessionId);
-    checkNotEmpty(accountUri, "Account must be set!");
-    let isValid = await this.validateRn(personId, ssn);
-
-    return `
-      {
-        "data": {
-          "type": "validate-ssn",
-          "id": "${uuid()}",
-          "attributes": {
-            "is-valid": ${isValid}
-          }
-        }
-      }
-   `;
-  }
-
-  async validateRn(personId, ssn) {
-    let askSsnQuery = askSsn(DEFAULT_GRAPH_URI, ssn, personId);
-    const queryResult = await query(askSsnQuery);
-
-    return !queryResult?.boolean;
   }
 
   getResponse(responseBuilder) {
