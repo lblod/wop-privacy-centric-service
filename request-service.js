@@ -105,7 +105,8 @@ export class RequestService {
     let responseBuilder = {};
     let queryParameters = {
       graph: privacyGraph,
-      appGraph: orgGraph,
+      appGraph: orgGraph + "/LoketLB-eredienstOrganisatiesGebruiker", // todo I had to do this but maybe there
+      // is a better solution
       personId,
     };
     let getPersonInfoQuery = getPersonInfo(
