@@ -151,7 +151,7 @@ export class RequestService {
   }
 
   async getOrgGraphAndPrivacyGraphByAccount(accountUri) {
-    checkNotEmpty(sessionId, "No account uri!");
+    checkNotEmpty(accountUri, "No account uri!");
     let getPrivacyGraphByAccountQ = getPrivacyGraphByAccountQuery(accountUri);
     const queryResult = await query(getPrivacyGraphByAccountQ);
     if (queryResult.results.bindings.length) {
