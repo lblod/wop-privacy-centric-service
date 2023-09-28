@@ -22,7 +22,7 @@ export function getPrivacyGraphByAccountQuery(accountUri) {
             ?bestuurseenheid mu:uuid ?uuidBestuurseenheid.
          }
          graph ?orgGraph {
-           ?privacyGraph a ext:PrivacyGraph;
+           ?pg a ext:PrivacyGraph;
                             mu:uuid ?uuidBestuurseenheid;
                                     ext:hasGraph ?privacyGraph.
 
