@@ -1,6 +1,6 @@
 {
   "name": "privacy-centric-service",
-  "version": "0.6.0",
+  "version": "0.1.0",
   "description": "supply a reason when reading or updating person's sensitive information",
   "main": "app.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "Nordine Bittich",
   "license": "MIT",
   "dependencies": {
-    "@lblod/mu-auth-sudo": "^0.5.1",
-    "body-parser": "^1.20.0",
+    "@lblod/mu-auth-sudo": "^0.6.1",
+    "body-parser": "^1.20.2",
     "lodash.flatten": "^4.4.0",
     "uuid": "^8.3.2"
   }
