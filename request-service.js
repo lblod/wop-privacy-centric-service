@@ -7,7 +7,7 @@ import {
   requestReadReason,
   getPersonInfo,
   getPersonNationalities,
-  getPrivacyGraphByAccountQuery,
+  getBestuureenheidByAccountQuery,
 } from "./queries";
 
 const SESSION_GRAPH_URI =
@@ -105,8 +105,7 @@ export class RequestService {
     let responseBuilder = {};
     let queryParameters = {
       graph: privacyGraph,
-      appGraph: orgGraph + "/LoketLB-eredienstOrganisatiesGebruiker", // todo I had to do this but maybe there
-      // is a better solution
+      appGraph: orgGraph,
       personId,
     };
     let getPersonInfoQuery = getPersonInfo(
@@ -153,13 +152,18 @@ export class RequestService {
 
   async getOrgGraphAndPrivacyGraphByAccount(accountUri) {
     checkNotEmpty(accountUri, "No account uri!");
-    let getPrivacyGraphByAccountQ = getPrivacyGraphByAccountQuery(accountUri);
+    let getPrivacyGraphByAccountQ = getBestuureenheidByAccountQuery(accountUri);
     const queryResult = await query(getPrivacyGraphByAccountQ);
     if (queryResult.results.bindings.length) {
       const result = queryResult.results.bindings[0];
+      checkNotEmpty(
+        result.uuidBestuurseenheid?.value,
+        "could not determine uuidBestuurseenheid",
+      );
+      let orgGraph = `http://mu.semte.ch/graphs/organizations/${result.uuidBestuurseenheid.value}`;
       return {
-        privacyGraph: result.privacyGraph?.value,
-        orgGraph: result.orgGraph?.value,
+        privacyGraph: orgGraph + "/privacy",
+        orgGraph: orgGraph + "/LoketLB-eredienstOrganisatiesGebruiker",
       };
     } else {
       return { privacyGraph: null, orgGraph: null };

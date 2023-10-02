@@ -10,10 +10,10 @@ PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 `;
 
-export function getPrivacyGraphByAccountQuery(accountUri) {
+export function getBestuureenheidByAccount(accountUri) {
   return `
   ${PREFIXES}
-  SELECT distinct ?orgGraph ?privacyGraph
+  SELECT distinct ?orgGraph 
       WHERE {
         graph ?g {
            ?persoon 
@@ -21,12 +21,7 @@ export function getPrivacyGraphByAccountQuery(accountUri) {
                      foaf:account ${sparqlEscapeUri(accountUri)}.
             ?bestuurseenheid mu:uuid ?uuidBestuurseenheid.
          }
-         graph ?orgGraph {
-           ?pg a ext:PrivacyGraph;
-                            mu:uuid ?uuidBestuurseenheid;
-                                    ext:hasGraph ?privacyGraph.
-
-         }
+        
       }
 `;
 }
