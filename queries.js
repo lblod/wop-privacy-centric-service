@@ -10,10 +10,10 @@ PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 `;
 
-export function getBestuureenheidByAccount(accountUri) {
+export function getBestuureenheidByAccountQuery(accountUri) {
   return `
   ${PREFIXES}
-  SELECT distinct ?orgGraph 
+  SELECT distinct ?uuidBestuurseenheid 
       WHERE {
         graph ?g {
            ?persoon 
