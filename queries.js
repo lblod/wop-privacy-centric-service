@@ -16,11 +16,11 @@ export function getBestuureenheidByAccountQuery(accountUri) {
   SELECT distinct ?uuidBestuurseenheid 
       WHERE {
         graph ?g {
-           ?persoon 
-                     foaf:member ?bestuurseenheid ;
-                     foaf:account ${sparqlEscapeUri(accountUri)}.
-            ?bestuurseenheid mu:uuid ?uuidBestuurseenheid.
-         }
+           ?persoon foaf:account ${sparqlEscapeUri(accountUri)}.
+        }
+        graph ?g {
+          ?s foaf:member ?bestuurseenheid ; mu:uuid ?uuidBestuurseenheid.
+        }
         
       }
 `;
