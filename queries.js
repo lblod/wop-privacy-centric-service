@@ -10,16 +10,17 @@ PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 `;
 
-export function getBestuureenheidByAccountQuery(accountUri) {
+export function getBestuureenheidByAccountQuery(accountUri, personId) {
   return `
   ${PREFIXES}
-  SELECT distinct ?uuidBestuurseenheid 
+  SELECT distinct ?graphBestuur 
       WHERE {
         graph ?g {
            ?persoon foaf:account ${sparqlEscapeUri(accountUri)}.
+           BIND (IRI(concat(str(?g), "/LoketLB-eredienstOrganisatiesGebruiker")) as ?graphBestuur).
         }
-        graph ?g {
-          ?s foaf:member ?bestuurseenheid ; mu:uuid ?uuidBestuurseenheid.
+        graph ?graphBestuur {
+            ?personen a person:Person; mu:uuid ${sparqlEscapeString(personId)}.
         }
         
       }

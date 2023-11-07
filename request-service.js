@@ -23,7 +23,7 @@ export class RequestService {
     checkNotEmpty(personId, "Person id must be set!");
     let accountUri = await this.getAccountBySession(sessionId);
     let { privacyGraph, orgGraph } =
-      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri);
+      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri, personId);
     checkNotEmpty(privacyGraph, "Privacy graph not found!");
     checkNotEmpty(orgGraph, "Org graph not found!");
     let responseBuilder = await this.buildPersonInfo(
@@ -61,7 +61,7 @@ export class RequestService {
     let accountUri = await this.getAccountBySession(sessionId);
 
     let { privacyGraph, orgGraph } =
-      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri);
+      await this.getOrgGraphAndPrivacyGraphByAccount(accountUri, personId);
     checkNotEmpty(privacyGraph, "Privacy graph not found!");
     checkNotEmpty(orgGraph, "Org graph not found!");
     let responseBuilder = await this.buildPersonInfo(
@@ -150,20 +150,23 @@ export class RequestService {
     }
   }
 
-  async getOrgGraphAndPrivacyGraphByAccount(accountUri) {
+  async getOrgGraphAndPrivacyGraphByAccount(accountUri, personId) {
     checkNotEmpty(accountUri, "No account uri!");
-    let getPrivacyGraphByAccountQ = getBestuureenheidByAccountQuery(accountUri);
+    let getPrivacyGraphByAccountQ = getBestuureenheidByAccountQuery(
+      accountUri,
+      personId,
+    );
     const queryResult = await query(getPrivacyGraphByAccountQ);
     if (queryResult.results.bindings.length) {
       const result = queryResult.results.bindings[0];
       checkNotEmpty(
-        result.uuidBestuurseenheid?.value,
+        result.graphBestuur?.value,
         "could not determine uuidBestuurseenheid",
       );
-      let orgGraph = `http://mu.semte.ch/graphs/organizations/${result.uuidBestuurseenheid.value}`;
+      let orgGraph = result.graphBestuur.value;
       return {
         privacyGraph: orgGraph + "/privacy",
-        orgGraph: orgGraph + "/LoketLB-eredienstOrganisatiesGebruiker",
+        orgGraph,
       };
     } else {
       return { privacyGraph: null, orgGraph: null };
