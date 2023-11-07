@@ -1,6 +1,6 @@
 {
   "name": "privacy-centric-service",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "supply a reason when reading or updating person's sensitive information",
   "main": "app.js",
   "scripts": {
