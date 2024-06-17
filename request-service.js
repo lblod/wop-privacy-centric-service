@@ -85,21 +85,6 @@ export class RequestService {
     return this.getResponse(responseBuilder);
   }
 
-  async getReasonUri(reasonId) {
-    var getReasonCodeUriQuery = getSparqlTemplate("get-reason-by-id", {
-      reasonId,
-    });
-    let queryResult = await query(getReasonCodeUriQuery);
-
-    if (queryResult.results.bindings.length) {
-      let res = queryResult.results.bindings[0];
-      let reasonUri = res.reasonUri?.value;
-      checkNotEmpty(reasonUri, "Code list not found");
-      return reasonUri;
-    } else {
-      throw Error("Code list not found");
-    }
-  }
 
   async buildPersonInfo(personId, privacyGraph, orgGraph) {
     let responseBuilder = {};
